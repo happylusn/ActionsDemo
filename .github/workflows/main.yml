@@ -1,17 +1,26 @@
-name: CI
-
-on: [push]
-
+name: 'GitHub Actions Weather Bot'
+ 
+on:
+  push:
+  schedule:
+    - cron: '0 21 * * *'
 jobs:
-  build:
-
+  bot:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+    - name: 'Checkout codes'
+      uses: actions/checkout@v1
+    - name: 'Get weather report'
+      run: curl -o result.html wttr.in/Hangzhou
+    - name: 'Send mail'
+      uses: dawidd6/action-send-mail@master
+      with:
+        serveraddress: smtp.163.com
+        serverport: 465
+        username: ${{ secrets.MAILUSERNAME }}
+        password: ${{ secrets.MAILPASSWORD }}
+        subject: Hangzhou Weather Report
+        body: file://result.html
+        to: 1278588306@qq.com
+        from: GitHub Actions
+        content_type: text/html
